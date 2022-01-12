@@ -1,9 +1,9 @@
 # CryptoHype
 A simple social media sentiment analysis done for crypto currencies. 
-//
+
 Scours through the internet to find the current pubic sentiment.
 Uses twitter API, reddit API
-/
+
 Libraries used:
 praw,
 tweepy,
