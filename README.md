@@ -28,4 +28,4 @@ Output:
 Shows the positive and negative sentiment of crypto coin searched in scale of 0.00 -1.00
 
 Comment:
-Since exception in output, need to be hidden
+Since exception in output, do not worry about it. Tweepy updated their library and removed the since function but the program still works without a problem.
