@@ -1,5 +1,5 @@
-us = "ALGORAND"
-tickers = "ALG0"
+us = ""
+
 
 # adding wsb/reddit flavour to vader to improve sentiment analysis, score: 4.0 to -4.0
 new_words = {
