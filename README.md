@@ -1,10 +1,10 @@
-# CryptoHype
-A simple social media sentiment analysis done for crypto currencies. 
+## CryptoHype
+##A simple social media sentiment analysis done for crypto currencies. 
 
-Scours through the internet to find the current pubic sentiment.
+###Scours through the internet to find the current pubic sentiment.
 Uses twitter API, reddit API
 
-Libraries used:
+- Libraries used:
 praw,
 tweepy,
 datetime,
@@ -16,16 +16,16 @@ Keys,
 vaderSentiment.vaderSentiment - SentimentIntensityAnalyzer,
 pandas,
 
-Input:
-Crypto token full name in Reddit list, Default is set as ALGORAND
+- Input:
+Crypto token full name.
 
-Searches in:
+- Searches in:
 Subreddits from Reddit .com (customizable list),
 Twitter tweets,
 Google News,
 
-Output:
+- Output:
 Shows the positive and negative sentiment of crypto coin searched in scale of 0.00 -1.00
 
-Comment:
+- Comment:
 Since exception in output, do not worry about it. Tweepy updated their library and removed the since function but the program still works without a problem.
