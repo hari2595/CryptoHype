@@ -1,3 +1,5 @@
+# Packages needed
+
 import praw
 import tweepy
 from datetime import datetime
@@ -8,13 +10,15 @@ import RedditLists
 import Keys
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import pandas as pd
-
 ########################################################################################################################
+
+# root used for google search
+
 root = "https://www.google.com/"
 link = f"https://www.google.com/search?q={str(RedditLists.us)}&tbm=nws&source=lnt&tbs=qdr:d&sa=X&ved=2ahUKEwjK0uL5-p31AhWejYkEHZcCADQQpwV6BAgBEBY&biw=1536&bih=722&dpr=1.25"
 
 
-##########################################################################################
+########################################################################################################################
 
 def data_extractor(reddit):
 
@@ -117,9 +121,6 @@ def main():
 # function to perform data extraction
 def scrape(words, date_since, numtweet):
 
-    # Enter your own credentials obtained
-    # from your developer account
-
     auth = tweepy.OAuthHandler(Keys.consumer_key, Keys.consumer_secret)
     auth.set_access_token(Keys.access_token, Keys.access_token_secret)
     api = tweepy.API(auth)
@@ -185,6 +186,7 @@ def TweetData():
 
 ########################################################################################################################
 
+# Function to search google news results from past 24 hrs
 def news(link):
     req = Request(link, headers={'User-Agent': 'Chrome/97.0.4692.71'})
     webpage = urlopen(req).read()
@@ -192,7 +194,7 @@ def news(link):
         try:
 
             soup = BeautifulSoup(webpage, 'html5lib')
-            #print(soup)
+
             for item in soup.find_all('div', attrs={'class': 'ZINbbc xpd O9g5cc uUPGi'}):
 
                 desc = (item.find('div', attrs={'class': 'BNeawe s3v9rd AP7Wnd'})).get_text()
@@ -200,14 +202,12 @@ def news(link):
                 desc = desc.split(' � ')[1]
                 desc = desc.replace(","," ")
 
-                #print(desc)
-
                 df = pd.DataFrame([x.split(';') for x in desc.split('\n')[1:]], columns=[x for x in desc.split('\n')[0].split(';')])
                 filename = 'scraped_news.csv'
 
                 # we will save our database as a CSV file.s
                 df.to_csv(filename, mode='a')
-                #print(df)
+                
             next = soup.find('a', attrs={'aria-label': 'Next page'})
             link = (next['href'])
             link = root+link
@@ -219,7 +219,9 @@ def news(link):
 
 ########################################################################################################################
 
+# function to analyze the sentiment score with Vader
 def score():
+    # Importing csv files from the previous functions and cleaning the data
     df1 = pd.read_csv('scraped_news.csv', encoding='cp850', header=None, sep='\n')
     df1 = df1[0].str.split('\s\|\s', expand=True)
     df2 = pd.read_csv("scraped_comments.csv", encoding='cp850')
@@ -227,13 +229,18 @@ def score():
     df2 = df2['comment']
     df3 = pd.read_csv("scraped_tweets.csv", encoding='cp850')
     df3 = df3['text']
-
+    
     frame = [df1, df2, df3]
     df = pd.concat(frame)
     df.reset_index(drop=True, inplace=True)
 
+    # Assigining the vader inbuilt analyzer
     analyzer = SentimentIntensityAnalyzer()
-
+    
+    # Adding reddit and twitter lingo to the lexicon
+    analyzer.lexicon.update(RedditLists.new_words)
+    
+    # Setting counters to add the positive / negative sentiment count of each line. The programs goes through each of the lines in the dataframe as seen in the for loop below
     pos = 0
     PosCount = 0
 
@@ -250,7 +257,9 @@ def score():
         if text_analyzer['compound'] <= 0:
             neg += 1
         NegCount += 1
-
+    
+    # Computing the scores
+    
     positive_score = pos / PosCount * 100.0
     negative_score = neg / NegCount * 100.0
     print("The positive sentiment is" )
@@ -258,14 +267,18 @@ def score():
     print("The negative sentiment is")
     print(negative_score)
 
+########################################################################################################################
 
+# Token name that is going to be searched
 
-
+def input_token():
+    print("Enter Token name")
+    RedditLists.us = input()
 
 
 if __name__ == '__main__':
+    input_token()
     main()
     TweetData()
     news(link)
     score()
-
